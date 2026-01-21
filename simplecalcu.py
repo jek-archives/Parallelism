@@ -8,36 +8,30 @@ def multiply(a, b):
     return a * b
 
 def divide(a, b):
-    if b != 0:
-        return a / b
-    else:
-        return "Error: Division by zero"
+    return a / b
 
 while True:
     op = input("Operation (+ - * /) or 'exit': ")
-
-    if op == 'exit':
+    if op == "exit":
         break
+    a = float(input("Enter first number: "))
+    b = float(input("Enter second number: "))
 
-    if op in ['+', '-', '*', '/']:
-        try:
-            a = float(input("Enter first number: "))
-            b = float(input("Enter second number: "))
-
-            if op == "+":
-                result = add(a, b)
-            elif op == "-":
-                result = subtract(a, b)
-            elif op == "*":
-                result = multiply(a, b)
-            elif op == "/":
-                result = divide(a, b)
-
-            print(f"Result: {result}")
-        except ValueError:
-            print("Invalid input. Please enter numbers.")
+    if op == "+":
+        print(add(a, b))
+        
+    elif op == "-":
+        print(subtract(a,b))
+    
+    elif op == "*":
+        print(multiply(a, b))
+    
+    elif op == "/":
+        print(divide(a, b))
     else:
-        print("Invalid operation. Please choose +, -, *, / or 'exit'.")
+        print("Invalid operation")
+
+    print()   
 
 
 
