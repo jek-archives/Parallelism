@@ -19,7 +19,6 @@ def compute_withholding_tax(salary):
     return salary * 0.10
 
 def task_parallelism_demo():
-    name = "Jake Kyotie"
     salary = 50000
 
     with ThreadPoolExecutor(max_workers=4) as executor:
