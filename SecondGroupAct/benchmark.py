@@ -29,3 +29,19 @@ def sequential_triage(patients):
     end = time.time()
     return end - start
 
+if __name__ == "__main__":
+    NUM_PATIENTS = 40
+    WORKERS = 6
+
+    patients = list(range(NUM_PATIENTS))
+
+    print("Running Sequential Triage...")
+    seq_time = sequential_triage(patients)
+    print(f"Sequential Time: {seq_time:.2f} seconds")
+
+    print("\nRunning Parallel Triage...")
+    par_time = parallel_triage(patients, WORKERS)
+    print(f"Parallel Time: {par_time:.2f} seconds")
+
+    speedup = seq_time / par_time
+    print(f"\nSpeedup: {speedup:.2f}x")
