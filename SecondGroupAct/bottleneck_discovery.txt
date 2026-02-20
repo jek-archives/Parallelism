@@ -1,0 +1,20 @@
+- In a typical clinic environment, the triage desk serves as the first point of patient intake. A single triage nurse is usually 
+responsible for the entire triage process, which includes collecting patient information, measuring vital signs, conducting symptom interviews, 
+and assigning a priority level. Each patient must complete all these steps before the next patient can be accommodated, resulting in a strictly sequential workflow.
+
+What Is the Current Bottleneck?
+
+- The primary bottleneck in this system is the reliance on a single triage nurse to process all patients from start to finish. 
+During peak clinic hours, patients form long queues because only one patient can be assessed at any given time, regardless of how simple or repetitive the triage tasks may be.
+
+Why It Limits Efficiency
+
+- The triage desk limits efficiency because vital sign collection, symptom documentation, and preliminary assessment are largely independent across patients 
+but are forced to occur sequentially. Since a single nurse performs all triage activities end-to-end, overall throughput is constrained by individual processing speed. 
+As patient volume increases, waiting times grow significantly even though multiple patients could be assessed simultaneously without compromising accuracy or safety.
+
+Type of Parallelism Required
+
+The most appropriate improvement strategy for this system is data parallelism. Each patient represents an independent data entity undergoing the same set of triage operations. 
+By allowing multiple workers to process different patients concurrently using identical procedures, throughput can be increased without altering the logical structure of the 
+triage process.

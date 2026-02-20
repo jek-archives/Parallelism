@@ -1,0 +1,18 @@
+Define the Work Unit
+
+- In the computational model, a single patient triage record is defined as the smallest independent unit of computation. 
+This unit includes measuring vital signs, recording symptoms, assigning a priority level, and saving the record. 
+Because these steps are repeated uniformly for every patient, each triage record can be processed independently of others.
+
+Identify System Constraints
+
+- Parallel execution in the clinic triage model is limited by several practical constraints. 
+The electronic medical record system functions as a shared resource that requires synchronized access, creating a critical section in the workflow. 
+Physical triage equipment, such as blood pressure monitors and thermometers, may be limited in number, leading to contention among workers. 
+Additionally, coordination overhead and thread management costs restrict how efficiently the system can scale as more workers are added.
+
+Select and Justify the Parallel Strategy
+
+- Data parallelism is the most suitable optimization strategy for the clinic triage desk. 
+Each patient represents an independent unit of data that undergoes the same triage procedure, allowing multiple workers to process different patients concurrently. 
+Synchronization is only necessary when accessing shared resources such as patient records, making data parallelism both effective and realistic for this scenario.
