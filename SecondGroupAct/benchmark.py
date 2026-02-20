@@ -17,3 +17,15 @@ def parallel_triage(patients, workers=4):
     end = time.time()
     return end - start
 
+def triage_patient(patient_id):
+    time.sleep(0.1)  # simulate vital signs
+    time.sleep(0.1)  # simulate symptom interview
+    time.sleep(0.05) # simulate database write
+
+def sequential_triage(patients):
+    start = time.time()
+    for patient in patients:
+        triage_patient(patient)
+    end = time.time()
+    return end - start
+
