@@ -1,1 +1,0 @@
-The “Analog-to-Digital” Parallel Challenge
