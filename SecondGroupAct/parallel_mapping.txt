@@ -16,3 +16,12 @@ Select and Justify the Parallel Strategy
 - Data parallelism is the most suitable optimization strategy for the clinic triage desk. 
 Each patient represents an independent unit of data that undergoes the same triage procedure, allowing multiple workers to process different patients concurrently. 
 Synchronization is only necessary when accessing shared resources such as patient records, making data parallelism both effective and realistic for this scenario.
+
+
+
+
+
+
+
+
+

@@ -18,3 +18,6 @@ Type of Parallelism Required
 The most appropriate improvement strategy for this system is data parallelism. Each patient represents an independent data entity undergoing the same set of triage operations. 
 By allowing multiple workers to process different patients concurrently using identical procedures, throughput can be increased without altering the logical structure of the 
 triage process.
+
+
+
