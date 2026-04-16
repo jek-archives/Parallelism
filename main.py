@@ -54,3 +54,11 @@ def parallel_merge_sort(data):
         sorted_data = merge(sorted_data, output[i])
 
     return sorted_data
+
+# Sequential Linear Search 
+def linear_search(data, target):
+    for i in range(len(data)):
+        if data[i] == target:
+            return i
+    return -1
+
