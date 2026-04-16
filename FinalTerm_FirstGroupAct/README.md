@@ -7,3 +7,14 @@ The comparative implementation of sequential and parallel algorithms highlights 
 
 Despite these benefits, parallel execution introduces complexities such as process coordination, communication overhead, and synchronization requirements. These factors can negatively affect performance, particularly when the workload is not large enough to compensate for the added costs. As a result, the effectiveness of parallelism depends heavily on problem size and system efficiency.
 
+
+-Tuazon Reflection
+In this activity, we learned the difference between sequential and parallel algorithms by implementing sorting and searching using both approaches. Sequential algorithms execute tasks one step at a time, while parallel algorithms divide the work into smaller parts that can run at the same time using multiple processes. Through our testing, we were able to see how these two approaches behave when working with different dataset sizes.
+
+When we tested the small dataset with 1,000 elements, the sequential algorithms were usually faster. This is because parallel algorithms have extra overhead, such as creating processes and coordinating results. For small tasks, this overhead sometimes takes longer than simply running the algorithm sequentially.
+
+However, when we tested larger datasets like 100,000 and 1,000,000 elements, the parallel algorithms started to perform better. Since the data was divided into chunks and processed simultaneously, the program could use multiple CPU cores, which helped reduce the overall execution time.
+
+One challenge we experienced was making sure the data was correctly divided and that the results from different processes were combined properly. For example, in the parallel sorting algorithm we had to merge sorted chunks correctly, and in the parallel search we had to return the correct index from different processes.
+
+Overall, this activity helped us understand that parallel algorithms are useful for large workloads but not always necessary for smaller ones. It also showed us that while parallel computing can improve performance, it also makes the program more complex to design and manage.
