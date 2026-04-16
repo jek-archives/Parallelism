@@ -10,3 +10,10 @@ Despite these benefits, parallel execution introduces complexities such as proce
 -Tuazon Reflection
 Sequential algorithms performed well, especially for smaller data. They are simple, direct, and avoid unnecessary overhead. Parallel algorithms only became useful when the dataset was large enough to justify running multiple tasks at once.
 The issue is the extra cost. Managing processes, syncing results, and handling communication adds overhead. Because of that, parallel versions can sometimes be slower. Parallel is not automatically faster. It only works better when the workload is large enough to support it.
+
+-Bajarla Reflection
+When I compared the two, sequential algorithms felt simpler and more reliable. They follow a step by step process, so there is less happening behind the scenes, which actually makes them faster for smaller datasets. Parallel algorithms try to run multiple tasks at the same time, and that can help, but only when the dataset is big enough to make a difference.
+
+The downside is that parallel processing is more complicated. You need to split the tasks, manage processes, and combine the results properly. All that extra work can slow things down instead of helping, especially with small inputs. In the end, parallel is not always better. It depends on the situation.
+
+
