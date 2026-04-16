@@ -27,4 +27,3 @@ def merge_sort(data):
     left = merge_sort(data[:mid])
     right = merge_sort(data[mid:])
     return merge(left, right)
-
