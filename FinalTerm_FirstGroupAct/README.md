@@ -29,3 +29,8 @@ Through testing with small, medium, and large datasets, we found that parallel a
  However, parallelism became beneficial for larger datasets where the workload justified the added complexity of synchronization and communication.
 
 Our group faced challenges in maintaining correctness across partitions, particularly when merging results and calculating global indices. Ultimately, we learned that while parallel execution offers scalability on multi-core systems, its effectiveness depends heavily on the dataset size and the cost of managing tasks.
+
+
+--Rabaya Reflection
+The implementation and testing of sequential and parallel algorithms showed clear differences in how they perform. Sequential algorithms were more consistent and easier to run since they follow a simple step-by-step process with little overhead, making them better for smaller datasets. On the other hand, parallel algorithms were able to run tasks at the same time, which helped improve performance, but mainly when working with larger datasets.
+However, parallel execution also came with challenges like managing multiple processes, handling communication between them, and combining results correctly. These added extra overhead, which sometimes made parallel algorithms slower than sequential ones, especially for small inputs. Overall, parallelism isn’t always better and it only becomes useful when the workload is large enough to outweigh the added complexity.
