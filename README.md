@@ -16,4 +16,6 @@ When I compared the two, sequential algorithms felt simpler and more reliable. T
 
 The downside is that parallel processing is more complicated. You need to split the tasks, manage processes, and combine the results properly. All that extra work can slow things down instead of helping, especially with small inputs. In the end, parallel is not always better. It depends on the situation.
 
-
+-Rabaya Reflection
+The implementation and testing of sequential and parallel algorithms showed clear differences in how they perform. Sequential algorithms were more consistent and easier to run since they follow a simple step-by-step process with little overhead, making them better for smaller datasets. On the other hand, parallel algorithms were able to run tasks at the same time, which helped improve performance, but mainly when working with larger datasets.
+However, parallel execution also came with challenges like managing multiple processes, handling communication between them, and combining results correctly. These added extra overhead, which sometimes made parallel algorithms slower than sequential ones, especially for small inputs. Overall, parallelism isn’t always better and it only becomes useful when the workload is large enough to outweigh the added complexity.
