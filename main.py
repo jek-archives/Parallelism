@@ -90,3 +90,44 @@ def parallel_search(data, target):
             return r
     return -1
 
+# Testing
+def test(size):
+    print(f"\nDataset size: {size}")
+
+    random_data = [random.randint(1, 1000000) for _ in range(size)]
+    sorted_data = list(range(size))
+    reverse_data = list(range(size, 0, -1))
+
+    datasets = [
+        ("Random", random_data),
+        ("Sorted", sorted_data),
+        ("Reverse", reverse_data)
+    ]
+
+    for name, data in datasets:
+        print(f"\n--- {name} Data ---")
+        target = data[-1]
+
+        # Sequential Sort
+        start = time.time()
+        merge_sort(data.copy())
+        print("Sequential Sort Time:", time.time() - start)
+
+        # Parallel Sort
+        start = time.time()
+        parallel_merge_sort(data.copy())
+        print("Parallel Sort Time:", time.time() - start)
+
+        # Sequential Search
+        start = time.time()
+        linear_search(data, target)
+        print("Sequential Search Time:", time.time() - start)
+
+        # Parallel Search
+        start = time.time()
+        parallel_search(data, target)
+        print("Parallel Search Time:", time.time() - start)
+
+if __name__ == "__main__":
+    for size in [1000, 100000, 1000000]:
+        test(size)
