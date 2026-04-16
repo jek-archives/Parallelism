@@ -27,3 +27,30 @@ def merge_sort(data):
     left = merge_sort(data[:mid])
     right = merge_sort(data[mid:])
     return merge(left, right)
+
+#  Parallel Merge Sort 
+def sort_chunk(chunk, output, index):
+    output[index] = merge_sort(chunk)
+
+def parallel_merge_sort(data):
+    manager = Manager()
+    output = manager.dict()
+
+    chunk_size = len(data) // 4
+    chunks = [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+
+    processes = []
+    for i, chunk in enumerate(chunks):
+        p = Process(target=sort_chunk, args=(chunk, output, i))
+        processes.append(p)
+        p.start()
+
+    for p in processes:
+        p.join()
+
+    # Merge sorted chunks
+    sorted_data = output[0]
+    for i in range(1, len(chunks)):
+        sorted_data = merge(sorted_data, output[i])
+
+    return sorted_data
