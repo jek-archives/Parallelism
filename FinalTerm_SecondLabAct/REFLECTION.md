@@ -1,6 +1,6 @@
 # Distributed Systems Lab: Final Reflection
 
-By [Your Name Here]
+By Quejada, Rabaya
 
 ### 1. Sequential vs. Distributed Execution
 If I had built this normally (sequentially), the system would have to stop and wait for the database to finish saving every single time someone voted. If the database was being slow, the whole app would freeze. 

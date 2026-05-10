@@ -390,39 +390,36 @@ BASE (Basically Available, Soft-state, Eventually consistent) behaviour.
 
 ## Reflection
 
-Building this system surfaced several non-obvious truths about distributed
-systems:
+By Quejada, Rabaya
 
-**1. "At-least-once" is the realistic delivery guarantee.**
-The edge nodes retry on failure, which means a vote *can* arrive at the API
-more than once. Rather than trying to prevent duplicate sends (which would
-require a distributed lock), we pushed the idempotency concern down to the
-database layer — where it is cheapest to enforce.
+### 1. Sequential vs. Distributed Execution
+If we had built this normally (sequentially), the system would have to stop and wait for the database to finish saving every single time someone voted. If the database was being slow, the whole app would freeze. 
 
-**2. Queues are shock absorbers, not solutions.**
-The Python Queue hides the impedance mismatch between fast producers (many edge
-nodes) and a slower consumer (one worker + network I/O to Supabase). In
-production this queue would need to be persistent (Redis, Kafka) so items
-survive process restarts. The in-memory queue is a deliberate simplification
-for this lab.
+By building it as a distributed system, we completely separated the pieces. Our edge nodes just rapidly fire off votes to the Flask API and move on. The API grabs the vote, tosses it into a Python queue, and instantly tells the user "success!" Meanwhile, a completely separate background worker pulls votes from that queue and saves them to Supabase. This means the edge nodes never have to wait around for the database.
 
-**3. Latency spikes reveal architectural bottlenecks.**
-When the worker is re-enabled after a pause, the latency figures for queued
-items reveal exactly how long they waited. In a real system, these spikes would
-trigger autoscaling of worker instances.
+### 2. System Performance & Load
+When we opened up four different terminals to run multiple edge nodes at the same time, the system handled the load perfectly. 
 
-**4. Eventual consistency requires honest communication.**
-During the worker-disabled window, an end user's vote exists in the queue but
-not in the database. A query to Supabase would not reflect their vote. Real
-systems often display a "your vote has been received" message immediately
-(optimistic UI) while the backend catches up — a UX pattern that acknowledges
-eventual consistency without confusing the user.
+To really test it, we purposely "crashed" the worker. Instead of crashing the whole API or losing votes, the votes just safely piled up in the Python queue (acting like a Pub/Sub buffer). The API stayed lightning fast, but the *end-to-end latency* (the total time it took for a vote to actually reach the database) spiked because the votes were stuck waiting in line.
 
-**5. Fault injection must be a first-class feature.**
-The toggle flag and control server were added intentionally. Without a way to
-inject failures in a controlled manner, it is impossible to verify that the
-system's resilience properties actually hold. This practice — chaos engineering
-at small scale — mirrors what Netflix's Chaos Monkey does in production.
+### 3. Challenges and Debugging
+Honestly, the hardest part was debugging. Having four terminal windows open at the same time made it confusing to figure out where an error was coming from! 
+
+Some specific issues we ran into:
+* **Database Security:** When we first connected to Supabase, our worker kept failing. It turned out Supabase has Row-Level Security (RLS) turned on by default, which blocked our script from inserting any data until we turned it off. We also accidentally broke our `.env` API key at one point.
+* **Threading Errors:** We got a weird `ValueError` because we tried to set up a system signal to pause the worker, but Python doesn't let you do that inside a background thread. We had to rewrite the code to catch and ignore that error.
+
+### 4. Buffering and Eventual Consistency
+The queue was the absolute backbone of this project. When we paused the worker during the test, a user's vote was technically "received" by the API, but if you looked in the Supabase database, it wasn't there yet. The system was temporarily out of sync. 
+
+This taught us about **eventual consistency**. Once we turned the worker back on, it rapidly drained the queue and the database finally caught up. 
+
+We also learned about **idempotency**. Because our edge nodes were programmed to retry if the connection failed, they sometimes sent the same vote twice. To prevent double-counting, we had to use an "upsert" in Supabase with a combined primary key (`user_id` + `poll_id`), ensuring the database only accepted one vote per person.
+
+### 5. Was it worth it? (Pros and Cons)
+**The Good:** The resilience is amazing. If our database completely crashes for 5 minutes, a normal app would go down with it. In our distributed app, people can keep voting seamlessly and the API will just hold the votes in the queue until the database comes back online.
+
+**The Bad:** It is so much more complicated. For a simple voting app, this is massive overkill. We had to write separate scripts for the API, the worker, and the edge nodes, worry about thread safety, handle HTTP retries, and set up database constraints to prevent duplicate data. It's a lot harder to build and debug than a simple, single-file script.
 
 ---
 

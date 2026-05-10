@@ -196,6 +196,7 @@ except (AttributeError, OSError, ValueError):
 def _start_control_server():
     """Run the control Flask app in a daemon thread."""
     try:
+        # pyrefly: ignore [missing-import]
         from flask import Flask as _Flask, jsonify as _jsonify
         ctrl = _Flask("worker_control")
         ctrl_queue = get_queue()   # Same queue singleton
