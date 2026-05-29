@@ -1,13 +1,4 @@
-"""
-edge_node.py
-------------
-Simulates a distributed edge node that generates random votes and sends
-them to the central Flask API. Supports retry logic and duplicate sending
-for idempotency testing.
 
-Run multiple instances with different EDGE_ID values to simulate a
-distributed environment.
-"""
 
 import os
 import time
@@ -17,21 +8,18 @@ import requests
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
+
 
 load_dotenv()
 
 API_URL       = os.getenv("API_URL", "http://127.0.0.1:5000")
-EDGE_ID       = os.getenv("EDGE_ID", "edge-1")       # Override per instance
-MAX_RETRIES   = 3                                      # Retry attempts per vote
-RETRY_DELAY   = 1.5                                    # Seconds between retries
-MIN_INTERVAL  = 1.0                                    # Min seconds between votes
-MAX_INTERVAL  = 3.0                                    # Max seconds between votes
+EDGE_ID       = os.getenv("EDGE_ID", "edge-1")
+MAX_RETRIES   = 3
+RETRY_DELAY   = 1.5
+MIN_INTERVAL  = 1.0
+MAX_INTERVAL  = 3.0
 
-# Sample data pools
-USER_IDS  = [f"user_{i:03d}" for i in range(1, 21)]   # user_001 … user_020
+USER_IDS  = [f"user_{i:03d}" for i in range(1, 21)]
 POLL_IDS  = ["poll_mayor", "poll_senator", "poll_governor"]
 CHOICES   = {
     "poll_mayor":    ["Alice", "Bob", "Carol"],
@@ -40,32 +28,19 @@ CHOICES   = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Core helpers
-# ---------------------------------------------------------------------------
+
 
 def build_vote(user_id: str, poll_id: str, send_duplicate: bool = False) -> dict:
-    """
-    Construct a vote payload.
-
-    The (user_id, poll_id) pair is the idempotency key on the server side.
-    Sending the same pair twice is what tests duplicate-rejection.
-    """
     return {
         "user_id":   user_id,
         "poll_id":   poll_id,
         "choice":    random.choice(CHOICES[poll_id]),
         "edge_id":   EDGE_ID,
-        "timestamp": time.time(),   # Used by the worker to compute latency
+        "timestamp": time.time(),
     }
 
 
 def send_vote(payload: dict, attempt: int = 1) -> bool:
-    """
-    POST a single vote to the API with retry logic.
-
-    Returns True on success, False after all retries are exhausted.
-    """
     url = f"{API_URL}/vote"
     for attempt in range(1, MAX_RETRIES + 1):
         try:
@@ -103,45 +78,33 @@ def send_vote(payload: dict, attempt: int = 1) -> bool:
     return False
 
 
-# ---------------------------------------------------------------------------
-# Main loop
-# ---------------------------------------------------------------------------
+
 
 def run(send_duplicates: bool = False, duplicate_rate: float = 0.2):
-    """
-    Continuously generate and send votes.
-
-    Args:
-        send_duplicates:  If True, occasionally re-send the same (user, poll)
-                          pair to test server-side idempotency.
-        duplicate_rate:   Fraction of votes (0–1) that will be duplicates.
-    """
     print(f"[{EDGE_ID}] Edge node starting. API={API_URL}  duplicates={send_duplicates}")
-    history: list[dict] = []   # Keep recent votes to replay as duplicates
+    history: list[dict] = []
 
     while True:
         user_id = random.choice(USER_IDS)
         poll_id = random.choice(POLL_IDS)
 
-        # Decide whether to replay a past vote (idempotency test)
+
         if send_duplicates and history and random.random() < duplicate_rate:
             past = random.choice(history)
             payload = past.copy()
-            payload["timestamp"] = time.time()   # Fresh timestamp; same IDs
+            payload["timestamp"] = time.time()
             print(f"[{EDGE_ID}] ↩ Sending DUPLICATE: user={past['user_id']} poll={past['poll_id']}")
         else:
             payload = build_vote(user_id, poll_id)
             history.append(payload)
-            if len(history) > 50:          # Keep history bounded
+            if len(history) > 50:
                 history.pop(0)
 
         send_vote(payload)
         time.sleep(random.uniform(MIN_INTERVAL, MAX_INTERVAL))
 
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Distributed Voting Edge Node")
@@ -163,7 +126,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # CLI flag overrides env var
     EDGE_ID = args.edge_id
 
     try:
